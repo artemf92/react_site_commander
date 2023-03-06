@@ -41,7 +41,7 @@ export default function Login({open, setOpen, setDemo}) {
   useEffect(() => {
     const token = isLoggedIn()
 
-    if (token.length) {
+    if (token?.length) {
       setOpen(true)
     }
   }, [])

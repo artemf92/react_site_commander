@@ -2,12 +2,20 @@ import React, { useEffect, useState } from 'react'
 import Command from './Command'
 import { Grid, Button, TextField, StepContent, StepLabel, Step, FormGroup, FormControlLabel, Checkbox, Select, InputLabel, FormControl, MenuItem, Stepper, Typography, Radio, RadioGroup } from '@mui/material';
 import { Box } from '@mui/system';
-import { sites } from '../libs/sites';
+// import { sites } from '../libs/sites';
 import { demo_sites } from '../libs/demo_sites'
 
 import logo from '../images/logo.png'
+// import { fetchDb } from '../firebase/fetchDb';
+// import { useList } from 'react-firebase-hooks/database'
+// import { ref, getDatabase } from 'firebase/database'
+import { database } from '../firebase'
+import { getDocs, collection, doc } from 'firebase/firestore';
+
+// const database = getDatabase(firebaseApp)
 
 function Panel({isDemo}) {
+  const [sites, setSites] = useState([])
   const templates = isDemo ? demo_sites : sites
 
   const [selectedTemplate, setSelectedTemplate] = useState({})
@@ -20,10 +28,23 @@ function Panel({isDemo}) {
   const [isNewDisk, setIsNewDisk] = useState(false)
   const [isNewTemplate, setIsNewTemplate] = useState(false)
   const [diskLocation, setDiskLocation] = useState('SSD')
-  const [ftp, setFtp] = useState('')
   const [ftpLogin, setFtpLogin] = useState('')
   const [ftpAddress, setFtpAddress] = useState('')
   const [ftpDir, setFtpDir] = useState('')
+
+  const getSites = async () => {
+    const sites = await getDocs(collection(database, 'sitesData')).then(
+      (querySnapshot) => {
+        const newData = querySnapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id
+        }))
+        setSites(newData)
+      }
+    )
+  }
+
+  getSites()
 
   const selectTemplateHandler = function (name) {
     const template = [...templates].find((t) => t.name === name)
@@ -39,6 +60,9 @@ function Panel({isDemo}) {
     // dbNameHandler(siteName)
     setDbName(siteName)
   }
+
+  // fetchDb()
+
   useEffect(() => {
     if (dbShort) {
       setDbName(siteName.replace(/(.ru)|(.online)/, ''))

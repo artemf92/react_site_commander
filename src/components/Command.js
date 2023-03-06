@@ -174,6 +174,7 @@ function Command({
               elevation={1}
             >
               <textarea
+                readOnly
                 ref={textarea2}
                 cols="50"
                 rows="18"
@@ -209,6 +210,7 @@ function Command({
           elevation={1}
         >
           <textarea
+            readOnly
             ref={textarea}
             cols="50"
             rows="18"

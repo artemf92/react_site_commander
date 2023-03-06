@@ -1,9 +1,13 @@
 import { initializeApp } from 'firebase/app'
+import { getFirestore } from 'firebase/firestore'
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   getAuth
 } from 'firebase/auth'
+
+import 'firebase/database'
+import { getDatabase } from 'firebase/database'
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -21,6 +25,10 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig)
 
+export const database = getFirestore(app)
+
+// console.log(db)
+
 export const createUser = async (email, password) => {
   return createUserWithEmailAndPassword(getAuth(app), email, password)
 }
@@ -29,4 +37,4 @@ export const signInUser = async (email, password) => {
   return signInWithEmailAndPassword(getAuth(app), email, password)
 }
 
-// export default app
+export default app
