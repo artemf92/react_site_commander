@@ -8,8 +8,7 @@
 
 [Site generator](https://sg.artem-frolov.ru/).
 
-Логин: demo
-Пароль: demo
+Логин: demo@gmail.com
+Пароль: demo11
 
-# react_site_commander
 # react_site_commander

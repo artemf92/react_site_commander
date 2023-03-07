@@ -27,27 +27,19 @@ const darkTheme = createTheme({
   }
 })
 
-function getCookie(name) {
-  let matches = document.cookie.match(
-    new RegExp(
-      '(?:^|; )' +
-        name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') +
-        '=([^;]*)'
-    )
-  )
-  return matches ? decodeURIComponent(matches[1]) : undefined
-}
-
 function App() {
   const theme = useTheme()
 
   const [isAuth, setIsAuth] = useState(false)
-  const [isDemo, setIsDemo] = useState(false)
+  const [isDemo, setIsDemo] = useState(true)
+
+  console.log(isDemo)
+  
   
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      {isAuth ? <Panel/> : <Login open={!isAuth} setDemo={setIsDemo} setOpen={setIsAuth} />}
+      {isAuth ? <Panel isDemo={isDemo}/> : <Login open={!isAuth} setDemo={setIsDemo} setOpen={setIsAuth} />}
      </ThemeProvider>
   )
 }

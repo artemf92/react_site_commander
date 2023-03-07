@@ -158,7 +158,7 @@ function Command({
     return () => clearTimeout(timer)
   }, [copied])
 
-  // if (!active || !template || !siteName || !dbName) return;
+  if (!active || !template || !siteName || !dbName) return;
 
   return (
     <>

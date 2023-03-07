@@ -2,20 +2,16 @@ import React, { useEffect, useState } from 'react'
 import Command from './Command'
 import { Grid, Button, TextField, StepContent, StepLabel, Step, FormGroup, FormControlLabel, Checkbox, Select, InputLabel, FormControl, MenuItem, Stepper, Typography, Radio, RadioGroup } from '@mui/material';
 import { Box } from '@mui/system';
-// import { sites } from '../libs/sites';
+// import { sites as sitesData } from '../libs/sites';
 import { demo_sites } from '../libs/demo_sites'
 
 import logo from '../images/logo.png'
-// import { fetchDb } from '../firebase/fetchDb';
-// import { useList } from 'react-firebase-hooks/database'
-// import { ref, getDatabase } from 'firebase/database'
 import { database } from '../firebase'
-import { getDocs, collection, doc } from 'firebase/firestore';
-
-// const database = getDatabase(firebaseApp)
+import { getDocs, collection } from 'firebase/firestore';
 
 function Panel({isDemo}) {
-  const [sites, setSites] = useState([])
+  console.log(isDemo)
+  const [sites, setSites] = useState(JSON.parse(process.env.REACT_APP_SITES))
   const templates = isDemo ? demo_sites : sites
 
   const [selectedTemplate, setSelectedTemplate] = useState({})
@@ -33,7 +29,7 @@ function Panel({isDemo}) {
   const [ftpDir, setFtpDir] = useState('')
 
   const getSites = async () => {
-    const sites = await getDocs(collection(database, 'sitesData')).then(
+    await getDocs(collection(database, 'sitesData')).then(
       (querySnapshot) => {
         const newData = querySnapshot.docs.map((doc) => ({
           ...doc.data(),
@@ -43,8 +39,6 @@ function Panel({isDemo}) {
       }
     )
   }
-
-  getSites()
 
   const selectTemplateHandler = function (name) {
     const template = [...templates].find((t) => t.name === name)
@@ -98,6 +92,7 @@ function Panel({isDemo}) {
     setIsNewDisk(false)
   }
 
+
   useEffect(() => {
     if (
       selectedTemplate.name === 'brand.vanblack.online' ||
@@ -106,6 +101,10 @@ function Panel({isDemo}) {
       selectedTemplate.name === 'shoes.steptime.online'
     ) setIsNewDisk(true)
   }, [selectedTemplate])
+
+  useEffect(() => {
+    if (!sites?.length) getSites()
+  }, [])
 
   return (
     <Box className="px-4 py-6">
@@ -133,7 +132,7 @@ function Panel({isDemo}) {
                     label="Шаблон"
                     onChange={(e) => selectTemplateHandler(e.target.value)}
                   >
-                    {templates.map((t) => (
+                    {templates?.map((t) => (
                       <MenuItem key={t.name} value={t.name}>
                         {t.name}
                       </MenuItem>
@@ -190,14 +189,17 @@ function Panel({isDemo}) {
                       <Grid container alignItems={'center'}>
                         <TextField
                           label={'Логин ftp'}
-                          style={{ marginBottom: 10, maxWidth: 120 }}
+                          style={{ marginBottom: 10, maxWidth: 100 }}
                           value={ftpLogin}
                           onChange={(e) => setFtpLogin(e.target.value)}
                         />
                         <Typography variant="body1">@</Typography>
                         <TextField
                           label={'Адрес'}
-                          style={{ marginBottom: 10 }}
+                          style={{
+                            marginBottom: 10,
+                            maxWidth: 'calc(100% - 100px - 15px)'
+                          }}
                           value={ftpAddress}
                           onChange={(e) => setFtpAddress(e.target.value)}
                         />
@@ -218,6 +220,12 @@ function Panel({isDemo}) {
                       variant="contained"
                       onClick={handleNext}
                       sx={{ mt: 1, mr: 1 }}
+                      disabled={
+                        diskLocation === 'FTP' &&
+                        !!ftpAddress &&
+                        !!ftpDir &&
+                        !!ftpLogin
+                      }
                     >
                       Дальше
                     </Button>

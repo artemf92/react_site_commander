@@ -29,7 +29,9 @@ export default function Login({open, setOpen, setDemo}) {
   const loginHandler = async () => {
     try {
       let registerResponse = await signInUser(email, password)
-      console.log(registerResponse)
+      if (registerResponse.user.email !== 'demo@gmail.com') {
+        setDemo(false)
+      }
       startSession(registerResponse.user);
       setOpen(true)
     } catch (error) {
