@@ -13,7 +13,7 @@ function Command({
   dbPassword,
   email,
   phone,
-  templateOnNewDisk,
+  // templateOnNewDisk,
   isNewTemplate,
   resetForm,
   diskLocation,
@@ -30,25 +30,25 @@ function Command({
   if (diskLocation === 'FTP') {
     command += `scp -rp ${process.env.REACT_APP_SSH_LOGIN}@${
       process.env.REACT_APP_SSH_ADDRESS
-    }:/var/www/www-root/data/${templateOnNewDisk ? 'mnt/disk2' : 'www'}/${
+    }:/var/www/www-root/data/${!template.disk ? 'mnt/disk2' : 'www'}/${
       template.name
     }/* ${ftpDir}/;\n`
     command += `scp -rp ${process.env.REACT_APP_SSH_LOGIN}@${
       process.env.REACT_APP_SSH_ADDRESS
-    }:/var/www/www-root/data/${templateOnNewDisk ? 'mnt/disk2' : 'www'}/${
+    }:/var/www/www-root/data/${!template.disk ? 'mnt/disk2' : 'www'}/${
       template.name
     }/.htaccess ${ftpDir}/;\n`
   } else {
     command += `scp -rp /var/www/www-root/data/${
-      templateOnNewDisk ? 'mnt/disk2' : 'www'
-    }/${template.name}/* /var/www/www-root/${
-      diskLocation === 'SSD' ? 'data/mnt' : 'www'
-    }/disk2/${siteName}/;\n`
+      !template.disk ? 'mnt/disk2' : 'www'
+    }/${template.name}/* /var/www/www-root/data/${
+      diskLocation === 'SSD' ? 'mnt/disk2' : 'www'
+    }/${siteName}/;\n`
     command += `scp -rp /var/www/www-root/data/${
-      templateOnNewDisk ? 'mnt/disk2' : 'www'
-    }/${template.name}/.htaccess /var/www/www-root/${
-      diskLocation === 'SSD' ? 'data/mnt' : 'www'
-    }/disk2/${siteName}/;\n`
+      !template.disk ? 'mnt/disk2' : 'www'
+    }/${template.name}/.htaccess /var/www/www-root/data/${
+      diskLocation === 'SSD' ? 'mnt/disk2' : 'www'
+    }/${siteName}/;\n`
     command += `mysqldump --no-tablespaces -u${template.db} -p${template.password_db} ${template.db} > /var/www/www-root/data/mnt/disk2/db/${template.db}.sql;\n`
   }
 
@@ -58,7 +58,11 @@ function Command({
     command += `mysql -u${dbName} -p${dbPassword} ${dbName} < /var/www/www-root/data/mnt/disk2/db/${template.db}.sql;\n`
   }
 
-  command += `mysql;\n`
+  if (diskLocation === 'FTP') {
+  command += `mysql -u${dbName} -p${dbPassword};\n`
+  } else {
+    command += `mysql;\n`
+  }
   command += `use ${dbName};\n`
   command += `TRUNCATE oc_order;\n`
   command += `TRUNCATE oc_order_history;\n`
@@ -89,7 +93,7 @@ function Command({
   if (diskLocation === 'FTP') command += `cd ${ftpDir}/;\n`
   else
     command += `cd /var/www/www-root/data/${
-      diskLocation === 'SSD' ? 'data/mnt' : 'www'
+      diskLocation === 'SSD' ? 'mnt/disk2' : 'www'
     }/${siteName}/;\n`
 
   command += `grep -irl "DB_DATABASE', '${template.db}" config.php|xargs perl -pi -e "s/DB_DATABASE', '${template.db}/DB_DATABASE', '${dbName}/";\n`
@@ -102,7 +106,7 @@ function Command({
   command += `grep -irl '${template.password_db}' admin/config.php|xargs perl -pi -e 's/${template.password_db}/${dbPassword}/';\n`
   command += `grep -irl '${template.password_db}' config.php|xargs perl -pi -e 's/${template.password_db}/${dbPassword}/';\n`
 
-  if (!templateOnNewDisk && diskLocation === 'SSD') {
+  if (!template.disk && diskLocation === 'SSD') {
     command += `grep -irl 'data\\/www' config.php|xargs perl -pi -e 's/data\\/www/data\\/mnt\\/disk2/';\n`
     command += `grep -irl 'data\\/www' admin/config.php|xargs perl -pi -e 's/data\\/www/data\\/mnt\\/disk2/';\n`
   }

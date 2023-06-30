@@ -21,7 +21,7 @@ function Panel({isDemo}) {
   const [dbPassword, setDbPassword] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
-  const [isNewDisk, setIsNewDisk] = useState(false)
+  // const [isNewDisk, setIsNewDisk] = useState(false)
   const [isNewTemplate, setIsNewTemplate] = useState(false)
   const [diskLocation, setDiskLocation] = useState('SSD')
   const [ftpLogin, setFtpLogin] = useState('')
@@ -89,18 +89,18 @@ function Panel({isDemo}) {
     setDbPassword('')
     setEmail('')
     setPhone('')
-    setIsNewDisk(false)
+    // setIsNewDisk(false)
   }
 
 
-  useEffect(() => {
-    if (
-      selectedTemplate.name === 'brand.vanblack.online' ||
-      selectedTemplate.name === 'wow.oh-yes.ru' ||
-      selectedTemplate.name === 'oy.oh-yes.ru' ||
-      selectedTemplate.name === 'shoes.steptime.online'
-    ) setIsNewDisk(true)
-  }, [selectedTemplate])
+  // useEffect(() => {
+  //   if (
+  //     selectedTemplate.name === 'brand.vanblack.online' ||
+  //     selectedTemplate.name === 'wow.oh-yes.ru' ||
+  //     selectedTemplate.name === 'oy.oh-yes.ru' ||
+  //     selectedTemplate.name === 'shoes.steptime.online'
+  //   ) setIsNewDisk(true)
+  // }, [selectedTemplate])
 
   useEffect(() => {
     if (!sites?.length) getSites()
@@ -220,12 +220,12 @@ function Panel({isDemo}) {
                       variant="contained"
                       onClick={handleNext}
                       sx={{ mt: 1, mr: 1 }}
-                      disabled={
-                        diskLocation === 'FTP' &&
-                        !!ftpAddress &&
-                        !!ftpDir &&
-                        !!ftpLogin
-                      }
+                      // disabled={
+                      //   diskLocation === 'FTP' &&
+                      //   !!ftpAddress &&
+                      //   !!ftpDir &&
+                      //   !!ftpLogin
+                      // }
                     >
                       Дальше
                     </Button>
@@ -399,7 +399,7 @@ function Panel({isDemo}) {
               dbPassword={dbPassword}
               email={email}
               phone={phone}
-              templateOnNewDisk={isNewDisk}
+              // templateOnNewDisk={isNewDisk}
               isNewTemplate={isNewTemplate}
               resetForm={resetFormHandler}
               diskLocation={diskLocation}
